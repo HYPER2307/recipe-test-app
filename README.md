@@ -1,10 +1,6 @@
-Here’s a template for the `README.md` file based on the provided requirements for the Car Dealer App:
+# Test app - Frontend JS Engineer Test
 
----
-
-# Car Dealer App - Frontend JS Engineer Test
-
-This is a frontend application for a car dealer app built with Next.js. The application allows users to filter vehicles by type and model year, displaying the results on a separate page. The app is styled using Tailwind CSS.
+This is a frontend application for a test app built with Next.js. The application allows users to filter vehicles by type and model year, displaying the results on a separate page. The app is styled using Tailwind CSS.
 
 ## Features
 
