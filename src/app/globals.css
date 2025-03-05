@@ -14,6 +14,10 @@
   }
 }
 
+* {
+  outline: none;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
@@ -21,5 +25,5 @@ body {
 }
 
 .container {
-  @apply mx-auto box-border w-full max-w-320 px-4 py-10 md:px-10 gl:px-25;
+  @apply box-border w-full max-w-320 mx-auto px-4 gl:px-25 md:px-10 py-10;
 }

@@ -1,31 +1,49 @@
-# Test app - Frontend JS Engineer Test
+# Recipe Finder App
 
-This is a frontend application for a test app built with Next.js. The application allows users to filter vehicles by type and model year, displaying the results on a separate page. The app is styled using Tailwind CSS.
+This is a frontend application built with Next.js that allows users to search for recipes by query, cuisine type, and preparation time. Users can browse results, view recipe details, and navigate seamlessly through the app.
 
 ## Features
 
-- **Home Page (Filter Page)**: Allows users to select a vehicle make and model year.
-- **Results Page**: Displays a list of vehicle models based on the selected make and model year.
-- **Responsive Design**: The app is built to be fully responsive, providing an optimal user experience on different devices.
-- **Error Handling**: Proper error handling is implemented for API data fetching issues.
+- **Search Page:**
+
+  - Enter a recipe query (e.g., "pasta").
+  - Select a cuisine type (Italian, Mexican, Chinese, etc.).
+  - Specify a maximum preparation time in minutes.
+  - "Next" button only enabled when at least one field is filled.
+
+- **Recipes Page:**
+
+  - Displays a list of recipes with titles and images.
+  - Clicking a recipe navigates to the details page.
+  - Server-side rendering with API response caching (1 minute).
+
+- **Recipe Details Page:**
+
+  - Shows the recipe title and ingredients list.
+  - Displays optional details like preparation time, servings, and summary.
+
+- **Responsive Design:** Fully responsive UI with Tailwind CSS.
+- **Loading States:** Managed with React's `Suspense`.
+- **Error Handling:** Proper handling for API errors or invalid inputs.
 
 ## Technologies Used
 
-- **Next.js**: For building the React-based application and handling static generation.
-- **Tailwind CSS**: For styling and responsive design.
-- **React Suspense**: Used to manage loading states.
-- **Axios**: For making API requests to fetch vehicle makes and models.
+- **Next.js:** For server-side rendering and routing.
+- **Tailwind CSS:** For styling and responsive design.
+- **React Suspense:** For managing loading states.
+- **Axios:** For API requests to Spoonacular.
+- **ESLint & Prettier:** For code quality and consistency.
 
 ## Setup Instructions
 
 ### Prerequisites
 
-- **Node.js**: Ensure you have Node.js installed on your machine. You can download it from [nodejs.org](https://nodejs.org/).
-- **npm** or **yarn**: A package manager to install dependencies.
+- **Node.js:** Install from [nodejs.org](https://nodejs.org/).
+- **npm** or **yarn:** A package manager to handle dependencies.
 
 ### Installation
 
-1. Clone the repository to your local machine:
+1. Clone the repository:
 
    ```bash
    git clone <repository-url>
@@ -36,116 +54,93 @@ This is a frontend application for a test app built with Next.js. The applicatio
 
    ```bash
    npm install
-   # or if you're using yarn
+   # or
    yarn install
    ```
 
-3. Create a `.env.local` file in the root directory and add any necessary environment variables.
+3. Create a `.env.local` file and add the Spoonacular API key:
+
+   ```plaintext
+   API_KEY=your_api_key_here
+   NEXT_PUBLIC_API_URL=your_api_url_here
+   ```
+
+> Get your API key from [Spoonacular](https://spoonacular.com/food-api/docs#Authentication).
 
 ### Running the Application
 
-To start the development server, run:
+Start the development server:
 
 ```bash
 npm run dev
-# or if you're using yarn
+# or
 yarn dev
 ```
 
-This will start the Next.js development server, and you can access the app at `http://localhost:3000`.
+Access the app at [http://localhost:3000](http://localhost:3000).
 
-### Building the Application
-
-To build the application for production, run:
+### Building for Production
 
 ```bash
 npm run build
-# or if you're using yarn
-yarn build
-```
-
-To start the production server after building:
-
-```bash
 npm run start
-# or if you're using yarn
+# or
+yarn build
 yarn start
 ```
 
 ### Testing
 
-To run tests, use the following command:
+Run tests:
 
 ```bash
 npm test
-# or if you're using yarn
+# or
 yarn test
 ```
 
 ### Linting and Formatting
 
-To check the code with ESLint and Prettier, use:
-
 ```bash
 npm run lint
-# or if you're using yarn
-yarn lint
-```
-
-To automatically fix linting issues, run:
-
-```bash
 npm run lint:fix
-# or if you're using yarn
+# or
+yarn lint
 yarn lint:fix
 ```
 
-## Folder Structure
-
-src/: Contains most of application's code.
-@types/: Presumably for TypeScript types.
-app/: Likely for Next.js pages and components.
-components/: For reusable UI components.
-constants/: For constants like vehicle types or years.
-hooks/: Custom React hooks.
-redux/: Redux-related files.
-services/: For API calls and services. # Project dependencies and scripts
-
 ## How the Application Works
 
-1. **Home Page (Filter Page)**:
+1. **Search Page:**
 
-   - The home page allows users to filter vehicles based on make and model year.
-   - The makes are fetched from the [NHTSA API](https://vpic.nhtsa.dot.gov/api/vehicles/GetMakesForVehicleType/car?format=json).
-   - Users can select the make from a dropdown and choose a model year from 2015 to the current year.
+   - Users fill out search fields and click "Next".
+   - Navigation to the recipes page with query params.
 
-2. **Results Page**:
+2. **Recipes Page:**
 
-   - After selecting a make and year, users click the "Next" button, which navigates to a result page displaying the available vehicle models.
-   - The vehicle models are fetched using the [NHTSA API](https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeIdYear/makeId/{makeId}/modelyear/{year}?format=json).
-   - The result page uses dynamic routing to display the models for the selected make and year.
+   - Fetches recipes from the Spoonacular API.
+   - Displays results with SSR and 1-minute caching.
 
-3. **Static Paths**:
+3. **Recipe Details Page:**
+   - Fetches detailed recipe info by ID.
+   - Shows ingredients, prep time, servings, and more.
 
-   - The result pages are statically generated using `generateStaticParams`, which fetches the makes and years and generates the paths for the results pages.
+## API Integration
 
-4. **Loading States**:
-   - React's `Suspense` component is used to show a loading indicator while fetching data from the API.
+- **Search Recipes:**
 
-## Configuration
-
-### Environment Variables
-
-The application requires an `.env.local` file for any necessary environment configurations. This file should be placed in the root directory and can contain keys like:
-
-```
-NEXT_PUBLIC_API_BASE_URL=<your-api-base-url>
+```javascript
+https://api.spoonacular.com/recipes/complexSearch?query={query}&cuisine={cuisine}&maxReadyTime={maxReadyTime}&apiKey=YOUR_API_KEY
 ```
 
-## Screencast
+- **Get Recipe Details:**
 
-[DEMO](https://www.loom.com/share/2931ffb6b2e5448581dd2535c84ec0ce?sid=b09a5116-8fe1-46a0-90b1-6514eae478ce)
+```javascript
+https://api.spoonacular.com/recipes/{recipeId}/information?apiKey=YOUR_API_KEY
+```
 
 ## Conclusion
 
-This application demonstrates the ability to build a frontend app using Next.js, fetch data from external APIs, and implement a responsive UI with Tailwind CSS. It also showcases best practices like static generation, error handling, and loading states with React Suspense.
+This app showcases building a frontend with Next.js, integrating with an external API, and crafting a responsive UI using Tailwind CSS. It demonstrates best practices like SSR, caching, error handling, and loading states.
+
+Let me know if you'd like any adjustments or enhancements! 🚀

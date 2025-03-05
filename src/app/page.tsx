@@ -1,77 +1,65 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/Button";
 import { Dropdown } from "@/components/Dropdown";
 import { IDropdownItem } from "@/components/Dropdown/types";
-import { useAppDispatch } from "@/hooks/redux";
-import { getVehiclesAsync } from "@/redux/vehicles/actions";
-import { selectVehiclesData } from "@/redux/vehicles/selectors";
-import { CAR_YEARS } from "@/constants/years";
+import { NumericInput } from "@/components/NumericInput";
+import { Search } from "@/components/Search";
+import { CUISINES_LIST } from "@/constants/cuisines";
 import { Sizes } from "@/@types/sizes";
 
 export default function Home() {
   const router = useRouter();
 
-  const dispatch = useAppDispatch();
-  const vehiclesData = useSelector(selectVehiclesData);
-
-  const [selectedVehicleMake, setSelectedVehicleMake] =
-    useState<IDropdownItem | null>(null);
-  const [selectedVehicleYear, setSelectedVehicleYear] =
-    useState<IDropdownItem | null>(null);
-
-  const { Results } = vehiclesData || {};
+  const [selectedCuisine, setSelectedCuisine] = useState<IDropdownItem | null>(
+    null
+  );
+  const [query, setQuery] = useState("");
+  const [cookingTime, setCookingTime] = useState("");
 
   const isButtonActive =
-    Boolean(selectedVehicleMake) && Boolean(selectedVehicleYear);
+    Boolean(selectedCuisine) || Boolean(query) || Boolean(cookingTime);
 
   const handleNext = () => {
     router.push(
-      `/result/${selectedVehicleMake?.id}/${selectedVehicleYear?.id}`
+      `/recipes?query=${query}&cuisine=${selectedCuisine?.label || ""}&maxReadyTime=${cookingTime.length ? cookingTime : 999}`
     );
   };
 
-  const vehiclesMakes: IDropdownItem[] =
-    Results?.map(({ MakeId, MakeName }) => ({
-      id: MakeId,
-      label: MakeName,
-    })) || [];
-
-  useEffect(() => {
-    dispatch(getVehiclesAsync());
-  }, [dispatch]);
+  const cuisinesDropdownItems: IDropdownItem[] = CUISINES_LIST.map(
+    (cuisine) => ({
+      id: crypto.randomUUID(),
+      label: cuisine,
+    })
+  );
 
   return (
-    <div className="container h-full">
-      <div className="flex h-full flex-col items-center justify-start gap-4 xs:flex-row xs:items-start xs:justify-center">
-        <div className="flex flex-col gap-4 sm:flex-row">
-          <Dropdown
-            options={vehiclesMakes}
-            currentOption={selectedVehicleMake}
-            onItemSelect={setSelectedVehicleMake}
-            title="Select vehicle"
-            className="flex-1"
-          />
+    <div className="container h-full p-6 md:p-10">
+      <div className="flex flex-col items-center justify-center gap-6">
+        <div className="w-full max-w-4xl space-y-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8">
+            <Search query={query} setQuery={setQuery} />
+            <NumericInput setValue={setCookingTime} value={cookingTime} />
+            <Dropdown
+              options={cuisinesDropdownItems}
+              currentOption={selectedCuisine}
+              onItemSelect={setSelectedCuisine}
+              title="Select cuisine"
+              className="flex-1"
+            />
+          </div>
 
-          <Dropdown
-            options={CAR_YEARS}
-            currentOption={selectedVehicleYear}
-            onItemSelect={setSelectedVehicleYear}
-            title="Select year"
-            className="flex-1"
-          />
+          <Button
+            size={Sizes.M}
+            isDisabled={!isButtonActive}
+            onClick={handleNext}
+            className="w-full transform px-6 py-3 text-xl font-semibold transition-all duration-300 ease-in-out hover:scale-105 hover:bg-indigo-600 sm:w-auto"
+          >
+            Next
+          </Button>
         </div>
-
-        <Button
-          size={Sizes.M}
-          isDisabled={!isButtonActive}
-          onClick={handleNext}
-        >
-          Next
-        </Button>
       </div>
     </div>
   );
